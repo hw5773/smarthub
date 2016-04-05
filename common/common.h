@@ -5,3 +5,4 @@
 
 unsigned long 	get_micro_seconds();
 int 			seed_prng(int);
+void			handle_errors();

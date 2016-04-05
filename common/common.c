@@ -12,5 +12,11 @@ int seed_prng(int bytes)
 {
 	srand(time(NULL));
 
-	return 0;
+	return 1;
+}
+
+void handle_errors(void)
+{
+	ERR_print_errors_fp(stderr);
+	abort();
 }

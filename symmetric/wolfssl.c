@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <wolfssl/wolfcrypt/aes.h>
 #include "test.h"
+#include "../logger/logger.h"
 
 int		select_random_key(unsigned char *, int);
 int		select_random_iv(unsigned char *, int);
