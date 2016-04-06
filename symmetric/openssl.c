@@ -8,19 +8,29 @@
 #include "crypto.h"
 #include "../common/common.h"
 
+#define NUM_OF_CRYPT 10000.0
+
 void 	select_random_key(unsigned char *, int);
 void 	select_random_iv(unsigned char *, int);
 int		encrypt(EVP_CIPHER_CTX *, unsigned char *, int, unsigned char *);
 int		decrypt(EVP_CIPHER_CTX *, unsigned char *, int, unsigned char *);
 
-int main (void)
+int main (int argc, char *argv[])
 {
+	FILE *out;
+	float			num_of_crypt = NUM_OF_CRYPT;
 	unsigned char 	key[EVP_MAX_KEY_LENGTH];
 	unsigned char 	iv[EVP_MAX_IV_LENGTH];
+	unsigned char	*fname;
 
 	EVP_CIPHER_CTX	*enc, *dec;
 
 	int i, decryptedtext_len, ciphertext_len;
+	unsigned long t = get_micro_seconds();
+
+	asprintf(&fname, "%s_%d_%lu.log", argv[0], (int)num_of_crypt, t);
+	
+	out = fopen(fname, "w");
 
 	ERR_load_crypto_strings();
 	OpenSSL_add_all_algorithms();
@@ -67,14 +77,22 @@ int main (void)
 
 	printf("Plaintext size: %d\n", (int)strlen(plaintext));
 	printf("Ciphertext size: %d\n", ciphertext_len);
+	printf("The number of crypt: %d\n", NUM_OF_CRYPT);
 	printf("Time for seeding: %lu us\n", t2-t1);
 	printf("Time for random key: %lu us\n", t3-t2);
 	printf("Time for random iv: %lu us\n", t4-t3);
 	printf("Time for Init: %lu us\n", t5-t4);
 	printf("Time for Enc: %lu us\n", t6-t5);
-	printf("Avg Time for Enc: %f us\n", (t6-t5)/10000.0);
+	printf("Avg Time for Enc: %f us\n", (t6-t5)/NUM_OF_CRYPT);
 	printf("Time for Dec: %lu us\n", t8-t7);
-	printf("Avg Time for Dec: %f us\n", (t8-t7)/10000.0);
+	printf("Avg Time for Dec: %f us\n", (t8-t7)/NUM_OF_CRYPT);
+
+	print_log(out, "Before encryption", t5);
+	print_log(out, "After encryption", t6);
+	print_log(out, "Before decryption", t7);
+	print_log(out, "After decryption", t8);
+
+	fclose(out);
 
 	return 0;
 }

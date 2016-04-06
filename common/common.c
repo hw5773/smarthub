@@ -20,3 +20,9 @@ void handle_errors(void)
 	ERR_print_errors_fp(stderr);
 	abort();
 }
+
+// the unit of time is "us"
+void print_log(FILE *fp, unsigned char *str, unsigned long t)
+{
+	fprintf(fp, "%lu, %s\n", t, str);
+}
