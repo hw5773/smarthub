@@ -20,7 +20,7 @@ int main (void)
 
 	EVP_CIPHER_CTX	*enc, *dec;
 
-	int decryptedtext_len, ciphertext_len;
+	int i, decryptedtext_len, ciphertext_len;
 
 	ERR_load_crypto_strings();
 	OpenSSL_add_all_algorithms();
@@ -46,23 +46,20 @@ int main (void)
 
 	unsigned long t5 = get_micro_seconds();
 
-	ciphertext_len = encrypt(enc, plaintext, strlen((char *)plaintext), ciphertext);
+	for (i=0; i<10000; i++)
+		ciphertext_len = encrypt(enc, plaintext, 1000, ciphertext);
 
 	unsigned long t6 = get_micro_seconds();
 
-	printf("Ciphertext is:\n");
-	BIO_dump_fp(stdout, (const char *)ciphertext, ciphertext_len);
-
 	unsigned long t7 = get_micro_seconds();
 
-	decryptedtext_len = decrypt(dec, ciphertext, ciphertext_len, decryptedtext);
+	for (i=0; i<10000; i++)
+		decryptedtext_len = decrypt(dec, ciphertext, ciphertext_len, decryptedtext);
 
 	unsigned long t8 = get_micro_seconds();
 
 	decryptedtext[decryptedtext_len] = '\0';
 
-	printf("Decrypted text is:\n");
-	printf("%s\n", decryptedtext);
 	printf("Decrypted text size: %d\n", decryptedtext_len);
 
 	EVP_cleanup();
@@ -75,7 +72,9 @@ int main (void)
 	printf("Time for random iv: %lu us\n", t4-t3);
 	printf("Time for Init: %lu us\n", t5-t4);
 	printf("Time for Enc: %lu us\n", t6-t5);
+	printf("Avg Time for Enc: %f us\n", (t6-t5)/10000.0);
 	printf("Time for Dec: %lu us\n", t8-t7);
+	printf("Avg Time for Dec: %f us\n", (t8-t7)/10000.0);
 
 	return 0;
 }
@@ -104,8 +103,6 @@ int encrypt(EVP_CIPHER_CTX *ctx, unsigned char *plaintext, int plaintext_len, un
 
 	ciphertext_len += len;
 
-	EVP_CIPHER_CTX_free(ctx);
-
 	return ciphertext_len;
 }
 
@@ -122,8 +119,6 @@ int decrypt(EVP_CIPHER_CTX *ctx, unsigned char *ciphertext, int ciphertext_len, 
 		handle_errors();
 
 	plaintext_len += len;
-
-	EVP_CIPHER_CTX_free(ctx);
 
 	return plaintext_len;
 }
