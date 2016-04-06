@@ -1,5 +1,5 @@
 COMPILER=gcc
-OUT=aes_128_cbc
+OUT=aes_128_cbc aes_192_cbc aes_256_cbc
 HEADER=crypto.h
 COMMON_DIR=../common
 COMMON=$(COMMON_DIR)/common.o
