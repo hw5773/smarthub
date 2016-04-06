@@ -3,7 +3,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-unsigned long 	get_micro_seconds();
-int 			seed_prng(int);
-void			handle_errors();
-void			print_log(FILE *, unsigned char *, unsigned long);
+double 	get_micro_seconds();
+int 	   seed_prng(int);
+void	   handle_errors();
+void	   print_log(FILE *, unsigned char *, double);

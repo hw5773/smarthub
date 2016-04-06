@@ -1,11 +1,11 @@
 #include "common.h"
 
-unsigned long get_micro_seconds()
+double get_micro_seconds()
 {
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 
-	return 1000000*tv.tv_sec + tv.tv_usec;
+	return tv.tv_sec + (tv.tv_usec/1000000.0);
 }
 
 int seed_prng(int bytes)
@@ -22,7 +22,7 @@ void handle_errors(void)
 }
 
 // the unit of time is "us"
-void print_log(FILE *fp, unsigned char *str, unsigned long t)
+void print_log(FILE *fp, unsigned char *str, double t)
 {
-	fprintf(fp, "%lu, %s\n", t, str);
+	fprintf(fp, "%.6lf, %s\n", t, str);
 }

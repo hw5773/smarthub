@@ -26,9 +26,9 @@ int main (int argc, char *argv[])
 	EVP_CIPHER_CTX	*enc, *dec;
 
 	int i, decryptedtext_len, ciphertext_len;
-	unsigned long t = get_micro_seconds();
+	int t = (int)get_micro_seconds();
 
-	asprintf(&fname, "%s_%d_%lu.log", argv[0], (int)num_of_crypt, t);
+	asprintf(&fname, "%s_%d_%d.log", argv[0], (int)num_of_crypt, t);
 	
 	out = fopen(fname, "w");
 
@@ -36,37 +36,37 @@ int main (int argc, char *argv[])
 	OpenSSL_add_all_algorithms();
 	OPENSSL_config(NULL);
 
-	unsigned long t1 = get_micro_seconds();
+	double t1 = get_micro_seconds();
 	if (!seed_prng(EVP_MAX_KEY_LENGTH))
 	{
 		printf("Fatal Error! Unable to seed the PRNG!\n");
 		abort();
 	}
-	unsigned long t2 = get_micro_seconds();
+	double t2 = get_micro_seconds();
 
 	select_random_key(key, EVP_MAX_KEY_LENGTH);
 
-	unsigned long t3 = get_micro_seconds();
+	double t3 = get_micro_seconds();
 
 	select_random_iv(iv, EVP_MAX_IV_LENGTH);
 
-	unsigned long t4 = get_micro_seconds();
+	double t4 = get_micro_seconds();
 
 	if (!crypto_init(&enc, &dec, key, iv)) handle_errors();
 
-	unsigned long t5 = get_micro_seconds();
+	double t5 = get_micro_seconds();
 
 	for (i=0; i<10000; i++)
 		ciphertext_len = encrypt(enc, plaintext, 1000, ciphertext);
 
-	unsigned long t6 = get_micro_seconds();
+	double t6 = get_micro_seconds();
 
-	unsigned long t7 = get_micro_seconds();
+	double t7 = get_micro_seconds();
 
 	for (i=0; i<10000; i++)
 		decryptedtext_len = decrypt(dec, ciphertext, ciphertext_len, decryptedtext);
 
-	unsigned long t8 = get_micro_seconds();
+	double t8 = get_micro_seconds();
 
 	decryptedtext[decryptedtext_len] = '\0';
 
@@ -78,13 +78,13 @@ int main (int argc, char *argv[])
 	printf("Plaintext size: %d\n", (int)strlen(plaintext));
 	printf("Ciphertext size: %d\n", ciphertext_len);
 	printf("The number of crypt: %d\n", NUM_OF_CRYPT);
-	printf("Time for seeding: %lu us\n", t2-t1);
-	printf("Time for random key: %lu us\n", t3-t2);
-	printf("Time for random iv: %lu us\n", t4-t3);
-	printf("Time for Init: %lu us\n", t5-t4);
-	printf("Time for Enc: %lu us\n", t6-t5);
+	printf("Time for seeding: %.6lf s\n", t2-t1);
+	printf("Time for random key: %.6lf us\n", t3-t2);
+	printf("Time for random iv: %.6lf us\n", t4-t3);
+	printf("Time for Init: %.6lf us\n", t5-t4);
+	printf("Time for Enc: %.6lf us\n", t6-t5);
 	printf("Avg Time for Enc: %f us\n", (t6-t5)/NUM_OF_CRYPT);
-	printf("Time for Dec: %lu us\n", t8-t7);
+	printf("Time for Dec: %.6lf us\n", t8-t7);
 	printf("Avg Time for Dec: %f us\n", (t8-t7)/NUM_OF_CRYPT);
 
 	print_log(out, "Before encryption", t5);
