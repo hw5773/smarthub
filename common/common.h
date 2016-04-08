@@ -6,4 +6,4 @@
 double 	get_micro_seconds();
 int 	   seed_prng(int);
 void	   handle_errors();
-void	   print_log(FILE *, unsigned char *, double);
+void	   print_log(FILE *, const char *, double);

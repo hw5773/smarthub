@@ -22,7 +22,7 @@ void handle_errors(void)
 }
 
 // the unit of time is "us"
-void print_log(FILE *fp, unsigned char *str, double t)
+void print_log(FILE *fp, const char *str, double t)
 {
 	fprintf(fp, "%.6lf, %s\n", t, str);
 }

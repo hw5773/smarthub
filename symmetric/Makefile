@@ -14,10 +14,10 @@ aes_128_cbc: $(AES_128_CBC) $(HEADER)
 	$(COMPILER) -o $@ $(AES_128_CBC) $(COMMON) $(LDFLAGS)
 
 aes_192_cbc: $(AES_192_CBC) $(HEADER)
-	$(COMPILER) -o $@ $(AES_128_CBC) $(COMMON) $(LDFLAGS)
+	$(COMPILER) -o $@ $(AES_192_CBC) $(COMMON) $(LDFLAGS)
 
 aes_256_cbc: $(AES_256_CBC) $(HEADER)
-	$(COMPILER) -o $@ $(AES_128_CBC) $(COMMON) $(LDFLAGS)
+	$(COMPILER) -o $@ $(AES_256_CBC) $(COMMON) $(LDFLAGS)
 
 .c.o:
 	$(COMPILER) $(CFLAGS) -c $<
