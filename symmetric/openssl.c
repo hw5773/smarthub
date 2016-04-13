@@ -56,6 +56,7 @@ int main (int argc, char *argv[])
 	OpenSSL_add_all_algorithms();
 	OPENSSL_config(NULL);
 
+	double t0 = get_micro_seconds();
 	sleep(5);
 
 	double t1 = get_micro_seconds();
@@ -92,6 +93,10 @@ int main (int argc, char *argv[])
 
 	double t8 = get_micro_seconds();
 
+	sleep(5);
+
+	double t9 = get_micro_seconds();
+
 	decryptedtext[decryptedtext_len] = '\0';
 
 	printf("Decrypted text size: %d\n", decryptedtext_len);
@@ -111,10 +116,12 @@ int main (int argc, char *argv[])
 	printf("Time for Dec: %.6lf us\n", (t8-t7)*1000000);
 	printf("Avg Time for Dec: %f us\n", (t8-t7)*1000000/num_of_crypt);
 
-	print_log(out, "Before encrypt_textion", t5);
-	print_log(out, "After encrypt_textion", t6);
-	print_log(out, "Before decrypt_textion", t7);
-	print_log(out, "After decrypt_textion", t8);
+	print_log(out, "Start application", t0);
+	print_log(out, "Before encrypt_text", t5);
+	print_log(out, "After encrypt_text", t6);
+	print_log(out, "Before decrypt_text", t7);
+	print_log(out, "After decrypt_text", t8);
+	print_log(out, "Stop application", t9);
 
 	fclose(out);
 
