@@ -13,7 +13,7 @@ names = []
 out_file = open("output.csv", "w")
 time_slice = 0.0002
 
-path = "../log_test/"
+path = "../log/"
 
 for root, dirs, files in os.walk(path):
 	
@@ -33,7 +33,7 @@ names.sort()
 csv_files.sort()
 log_files.sort()
 
-out_file.write("algorithm, key, mode, num of test, plaintext bytes, title, time(us), avg power(mW), max power(mW), min power(mW)\n");
+out_file.write("algorithm, key, mode, num of test, plaintext bytes, enc time(us), dec time(us), enc avg power(mW), dec avg power(mW), enc max power(mW), dec max power(mW), enc min power(mW), dec min power(mW)\n");
 
 # times[0]: Before encryption, times[1]: After encryption,
 # times[2]: Before decryption, times[3]: After decryption
@@ -73,9 +73,8 @@ for n in range(len(csv_files)):
 	avg_powers = []
 	max_powers = []
 	min_powers = []
-	avg_base = 0
-	avg_enc = (time_point[2] - time_point[1])/float(s[3])
-	avg_dec = (time_point[4] - time_point[3])/float(s[3])
+	avg_enc = (time_point[2] - time_point[1])*1000000/float(s[3])
+	avg_dec = (time_point[4] - time_point[3])*1000000/float(s[3])
 
 	for line in f:
 		time = float(line.split(",")[0])
@@ -117,8 +116,7 @@ for n in range(len(csv_files)):
 			idx = idx + 1
 
 			if idx == 10:
-				out_file.write("%s, %s, %s, %s, %s, %s, %s, %.2lf, %.2lf, %.2lf, %.2lf\n" % (s[0], s[1], s[2], s[3], s[4], s[5], "enc", avg_enc, avg_powers[1]-avg_powers[0], max_powers[1]-avg_powers[0], min_powers[1]-avg_powers[0]))
-				out_file.write("%s, %s, %s, %s, %s, %s, %s, %.2lf, %.2lf, %.2lf, %.2lf\n" % (s[0], s[1], s[2], s[3], s[4], s[5], "dec", avg_dec, avg_powers[3]-avg_powers[0], max_powers[3]-avg_powers[0], min_powers[3]-avg_powers[0]))
+				out_file.write("%s, %s, %s, %s, %s, %.2lf, %.2lf, %.2lf, %.2lf, %.2lf, %.2lf, %.2lf, %.2lf\n" % (s[0], s[1], s[2], s[3], s[4], avg_enc, avg_dec, avg_powers[1]-avg_powers[0], avg_powers[3]-avg_powers[0], max_powers[1]-avg_powers[0], max_powers[3]-avg_powers[0], min_powers[1]-avg_powers[0], min_powers[3]-avg_powers[0]))
 				break
 		elif start:
 			if isFloat(line.split(",")[3][0:-2]) == True:
