@@ -1,0 +1,3 @@
+add this revised s3_clnt.c and s3_srvr.c in the ssl directory.
+change the Makefile to include common.c and common.o
+make
