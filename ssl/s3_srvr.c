@@ -163,13 +163,10 @@
 #include <openssl/x509.h>
 
 /////
-#ifndef NUM_OF_CRYPT
-#define NUM_OF_CRYPT 100000
-#endif
-#ifndef __COMMON_H__
-#define __COMMON_H__
+//#ifndef __COMMON_H__
+//#define __COMMON_H__
 #include "common.h"
-#endif
+//#endif
 /////
 
 #ifndef OPENSSL_NO_DH

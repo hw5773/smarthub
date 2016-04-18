@@ -158,17 +158,14 @@
 #include <openssl/md5.h>
 
 /////
-#ifndef NUM_OF_CRYPT
-#define NUM_OF_CRYPT 100000
-#endif
-#ifndef __COMMON_H__
-#define __COMMON_H__
+//#ifndef __COMMON_H__
+//#define __COMMON_H__
 #include "common.h"
-#endif
+//#endif
 
 int num = 0;
 int before = 0; after = 0;
-double log[10];
+double log_time[10];
 /////
 
 #ifdef OPENSSL_FIPS
@@ -311,13 +308,13 @@ int ssl3_connect(SSL *s)
 			int count = 0;
 			
 			before = num;
-			log[num++] = get_micro_seconds();	
+			log_time[num++] = get_micro_seconds();	
 			for (count = 0; count < NUM_OF_CRYPT; count++)
 	            ret = ssl3_client_hello(s);
 			after = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 
-			printf("client hello: %.6lf\n", log[after]-log[before]);
+			printf("client hello: %.6lf\n", log_time[after]-log_time[before]);
 //			print_log(fp, "Before client hello", t1);
 //			print_log(fp, "After client hello", t2);
 			/////
@@ -338,13 +335,13 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 			for (count = 0; count < NUM_OF_CRYPT; count++)
 	            ret = ssl3_get_server_hello(s);
 			after = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 
-			printf("server hello: %.6lf\n", log[after]-log[before]);
+			printf("server hello: %.6lf\n", log_time[after]-log_time[before]);
 //			print_log(fp, "Before server hello", t1);
 //			print_log(fp, "After server hello", t2);
 			/////
@@ -399,13 +396,13 @@ int ssl3_connect(SSL *s)
 
 				/////
 				before = num;
-				log[num++] = get_micro_seconds();
+				log_time[num++] = get_micro_seconds();
 				for (count = 0; count < NUM_OF_CRYPT; count++)
 	                ret = ssl3_get_server_certificate(s);
 				after = num;
-				log[num++] = get_micro_seconds();
+				log_time[num++] = get_micro_seconds();
 
-				printf("server cert: %.6lf\n", log[after]-log[before]);
+				printf("server cert: %.6lf\n", log_time[after]-log_time[before]);
 //				print_log(fp, "Before server cert", t1);
 //				print_log(fp, "After server cert", t2);
 				/////
@@ -463,13 +460,13 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 			for (count = 0; count < NUM_OF_CRYPT; count++)
 	            ret = ssl3_get_server_done(s);
 			after = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 
-			printf("server done: %.6lf\n", log[after]-log[before]);
+			printf("server done: %.6lf\n", log_time[after]-log_time[before]);
 //			print_log(fp, "Before server done", t1);
 //			print_log(fp, "After server done", t2);
 			/////
@@ -617,7 +614,7 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 			for (count = 0; count < NUM_OF_CRYPT; count++)
 	            ret = ssl3_send_finished(s,
                                      SSL3_ST_CW_FINISHED_A,
@@ -627,9 +624,9 @@ int ssl3_connect(SSL *s)
                                      s->method->
                                      ssl3_enc->client_finished_label_len);
 			after = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 
-			printf("send finished: %.6lf\n", log[after]-log[before]);
+			printf("send finished: %.6lf\n", log_time[after]-log_time[before]);
 //			print_log(fp, "Before send finished", t1);
 //			print_log(fp, "After send finished", t2);
 			/////
@@ -689,14 +686,14 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 			for (count = 0; count < NUM_OF_CRYPT; count++)
 	            ret = ssl3_get_finished(s, SSL3_ST_CR_FINISHED_A,
                                     SSL3_ST_CR_FINISHED_B);
 			after = num;
-			log[num++] = get_micro_seconds();
+			log_time[num++] = get_micro_seconds();
 
-			printf("get finished: %.6lf\n", log[after]-log[before]);
+			printf("get finished: %.6lf\n", log_time[after]-log_time[before]);
 //			print_log(fp, "Before finished", t1);
 //			print_log(fp, "After finished", t2);
 			/////
@@ -1199,8 +1196,9 @@ int ssl3_get_server_hello(SSL *s)
      */
     if (s->session->cipher)
         s->session->cipher_id = s->session->cipher->id;
+/////
+/*
     if (s->hit && (s->session->cipher_id != c->id)) {
-/* Workaround is now obsolete */
 #if 0
         if (!(s->options & SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG))
 #endif
@@ -1211,6 +1209,8 @@ int ssl3_get_server_hello(SSL *s)
             goto f_err;
         }
     }
+*/
+/////
     s->s3->tmp.new_cipher = c;
     /*
      * Don't digest cached records if no sigalgs: we may need them for client
