@@ -124,6 +124,8 @@
 #include <openssl/evp.h>
 #include <openssl/x509.h>
 
+#include "common.h"
+
 /*
  * send s->init_buf in records of type 'type' (SSL3_RT_HANDSHAKE or
  * SSL3_RT_CHANGE_CIPHER_SPEC)
@@ -158,6 +160,12 @@ int ssl3_do_write(SSL *s, int type)
 
 int ssl3_send_finished(SSL *s, int a, int b, const char *sender, int slen)
 {
+/////
+	int k;
+for (k=0; k<NUM_OF_CRYPT; k++)
+{
+/////
+
     unsigned char *p;
     int i;
     unsigned long l;
@@ -198,6 +206,9 @@ int ssl3_send_finished(SSL *s, int a, int b, const char *sender, int slen)
         s->state = b;
     }
 
+/////
+}
+/////
     /* SSL3_ST_SEND_xxxxxx_HELLO_B */
     return ssl_do_write(s);
 }
@@ -237,6 +248,11 @@ int ssl3_get_finished(SSL *s, int a, int b)
     int al, i, ok;
     long n;
     unsigned char *p;
+
+/////
+	int k;
+for (k=0; k<NUM_OF_CRYPT; k++)
+{
 
 #ifdef OPENSSL_NO_NEXTPROTONEG
     /*
@@ -286,7 +302,9 @@ int ssl3_get_finished(SSL *s, int a, int b)
         memcpy(s->s3->previous_server_finished, s->s3->tmp.peer_finish_md, i);
         s->s3->previous_server_finished_len = i;
     }
-
+/////
+}
+/////
     return (1);
  f_err:
     ssl3_send_alert(s, SSL3_AL_FATAL, al);
