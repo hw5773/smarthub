@@ -216,7 +216,7 @@ int ssl3_connect(SSL *s)
 	unsigned char *filename;
 	asprintf(&filename, "clnt_handshake_%lu.log", Time);
 	printf("filename: %s\n", filename);
-	fp = fopen(filename, "w");
+	fp = fopen((const char *)filename, "w");
 /////
 
     RAND_add(&Time, sizeof(Time), 0);
@@ -320,10 +320,8 @@ int ssl3_connect(SSL *s)
 
 			//////
 			before = num;
-			log_time[num++] = get_micro_seconds();
 	        ret = ssl3_client_hello(s);
-			after = num;
-			log_time[num++] = get_micro_seconds();
+			after = num-1;
 
 			printf("client hello: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before client hello", log_time[before]);
@@ -347,10 +345,8 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log_time[num++] = get_micro_seconds();
 	        ret = ssl3_get_server_hello(s);
-			after = num;
-			log_time[num++] = get_micro_seconds();
+			after = num-1;
 
 			printf("server hello: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before server hello", log_time[before]);
@@ -411,10 +407,8 @@ int ssl3_connect(SSL *s)
 
 				/////
 				before = num;
-				log_time[num++] = get_micro_seconds();
 	            ret = ssl3_get_server_certificate(s);
-				after = num;
-				log_time[num++] = get_micro_seconds();
+				after = num-1;
 
 				printf("server cert: %.6lf\n", log_time[after]-log_time[before]);
 				print_log(fp, "Before server cert", log_time[before]);
@@ -447,10 +441,8 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log_time[num++] = get_micro_seconds();
 	        ret = ssl3_get_key_exchange(s);
-			after = num;
-			log_time[num++] = get_micro_seconds();
+			after = num-1;
 
 			printf("server key exchange: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before server key exchange", log_time[before]);
@@ -535,10 +527,8 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log_time[num++] = get_micro_seconds();
 	        ret = ssl3_send_client_key_exchange(s);
-			after = num;
-			log_time[num++] = get_micro_seconds();
+			after = num-1;
 
 			printf("client key exchange: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before client key exchange", log_time[before]);
@@ -650,7 +640,6 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log_time[num++] = get_micro_seconds();
 	        ret = ssl3_send_finished(s,
                                      SSL3_ST_CW_FINISHED_A,
                                      SSL3_ST_CW_FINISHED_B,
@@ -658,8 +647,7 @@ int ssl3_connect(SSL *s)
                                      ssl3_enc->client_finished_label,
                                      s->method->
                                      ssl3_enc->client_finished_label_len);
-			after = num;
-			log_time[num++] = get_micro_seconds();
+			after = num-1;
 
 			printf("send finished: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before send finished", log_time[before]);
@@ -725,11 +713,9 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log_time[num++] = get_micro_seconds();
 	        ret = ssl3_get_finished(s, SSL3_ST_CR_FINISHED_A,
                                     SSL3_ST_CR_FINISHED_B);
-			after = num;
-			log_time[num++] = get_micro_seconds();
+			after = num-1;
 
 			printf("get finished: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before finished", log_time[before]);
@@ -832,6 +818,7 @@ int ssl3_connect(SSL *s)
 int ssl3_client_hello(SSL *s)
 {
 /////
+log_time[num++] = get_micro_seconds();
 	for (count=0; count < NUM_OF_CRYPT; count++)
 	{
 
@@ -1048,6 +1035,7 @@ int ssl3_client_hello(SSL *s)
     }
 /////
 	}
+log_time[num++] = get_micro_seconds();
 /////
 
 	return ssl_do_write(s);
@@ -1059,21 +1047,12 @@ int ssl3_client_hello(SSL *s)
 
 int ssl3_get_server_hello(SSL *s)
 {
-/////
-	int al = SSL_AD_INTERNAL_ERROR;
-
-for (count = 0; count < NUM_OF_CRYPT; count++)
-{
-/////
     STACK_OF(SSL_CIPHER) *sk;
     const SSL_CIPHER *c;
     CERT *ct = s->cert;
     unsigned char *p, *d;
 
-/////
-//    int i, al = SSL_AD_INTERNAL_ERROR, ok;
-	int i, ok;
-/////
+    int i, al = SSL_AD_INTERNAL_ERROR, ok;
 
     unsigned int j;
     long n;
@@ -1093,6 +1072,14 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
 
     if (!ok)
         return ((int)n);
+
+/////
+log_time[num++] = get_micro_seconds();
+
+for (count = 0; count < NUM_OF_CRYPT; count++)
+{
+/////
+
 
     if (SSL_IS_DTLS(s)) {
         s->first_packet = 0;
@@ -1337,6 +1324,7 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
     }
 /////
 }
+log_time[num++] = get_micro_seconds();
 /////
 
     return (1);
@@ -1365,13 +1353,14 @@ int ssl3_get_server_certificate(SSL *s)
                                    SSL3_ST_CR_CERT_B,
                                    -1, s->max_cert_list, &ok);
 
-/////
-for (count = 0; count < NUM_OF_CRYPT; count++)
-{
-/////
 
     if (!ok)
         return ((int)n);
+/////
+log_time[num++] = get_micro_seconds();
+for (count = 0; count < NUM_OF_CRYPT; count++)
+{
+/////
 
     if ((s->s3->tmp.message_type == SSL3_MT_SERVER_KEY_EXCHANGE) ||
         ((s->s3->tmp.new_cipher->algorithm_auth & SSL_aKRB5) &&
@@ -1543,6 +1532,7 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
     sk_X509_pop_free(sk, X509_free);
 /////
 }
+log_time[num++] = get_micro_seconds();
 /////
     return (ret);
 }
@@ -1583,13 +1573,13 @@ int ssl3_get_key_exchange(SSL *s)
                                    SSL3_ST_CR_KEY_EXCH_A,
                                    SSL3_ST_CR_KEY_EXCH_B,
                                    -1, s->max_cert_list, &ok);
-/////
-for (count = 0; count < NUM_OF_CRYPT; count++)
-{
-
-/////
     if (!ok)
         return ((int)n);
+/////
+log_time[num++] = get_micro_seconds();
+for (count = 0; count < NUM_OF_CRYPT; count++)
+{
+/////
 
     alg_k = s->s3->tmp.new_cipher->algorithm_mkey;
 
@@ -2190,6 +2180,7 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
     EVP_MD_CTX_cleanup(&md_ctx);
 /////
 }
+log_time[num++] = get_micro_seconds();
 /////
     return (1);
  f_err:
@@ -2618,6 +2609,7 @@ static DH *get_server_static_dh_key(SESS_CERT *scert)
 
 int ssl3_send_client_key_exchange(SSL *s)
 {
+
     unsigned char *p;
     int n;
     unsigned long alg_k;
@@ -2636,8 +2628,8 @@ int ssl3_send_client_key_exchange(SSL *s)
     int encoded_pt_len = 0;
     BN_CTX *bn_ctx = NULL;
 #endif
-
 /////
+log_time[num++] = get_micro_seconds();
 for (count = 0; count < NUM_OF_CRYPT; count++)
 {
 /////
@@ -3359,6 +3351,7 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
 
 /////
 }
+log_time[num++] = get_micro_seconds();
 /////
 
     /* SSL3_ST_CW_KEY_EXCH_B */

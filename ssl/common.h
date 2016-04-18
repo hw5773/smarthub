@@ -9,6 +9,7 @@
 #endif
 
 extern double log_time[16];
+extern int num;
 extern SSL *fake;
 
 double		get_micro_seconds();

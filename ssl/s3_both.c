@@ -161,6 +161,7 @@ int ssl3_do_write(SSL *s, int type)
 int ssl3_send_finished(SSL *s, int a, int b, const char *sender, int slen)
 {
 /////
+log_time[num++] = get_micro_seconds();
 	int k;
 for (k=0; k<NUM_OF_CRYPT; k++)
 {
@@ -208,6 +209,7 @@ for (k=0; k<NUM_OF_CRYPT; k++)
 
 /////
 }
+log_time[num++] = get_micro_seconds();
 /////
     /* SSL3_ST_SEND_xxxxxx_HELLO_B */
     return ssl_do_write(s);
@@ -249,10 +251,6 @@ int ssl3_get_finished(SSL *s, int a, int b)
     long n;
     unsigned char *p;
 
-/////
-	int k;
-for (k=0; k<NUM_OF_CRYPT; k++)
-{
 
 #ifdef OPENSSL_NO_NEXTPROTONEG
     /*
@@ -266,6 +264,13 @@ for (k=0; k<NUM_OF_CRYPT; k++)
 
     if (!ok)
         return ((int)n);
+
+/////
+log_time[num++] = get_micro_seconds();
+int k;
+for (k=0; k<NUM_OF_CRYPT; k++)
+{
+/////
 
     /* If this occurs, we have missed a message */
     if (!s->s3->change_cipher_spec) {
@@ -304,6 +309,7 @@ for (k=0; k<NUM_OF_CRYPT; k++)
     }
 /////
 }
+log_time[num++] = get_micro_seconds();
 /////
     return (1);
  f_err:
