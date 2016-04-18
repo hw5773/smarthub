@@ -166,7 +166,7 @@ SSL *fake;
 int count = 0;
 int num = 0;
 int before = 0, after = 0;
-double log_time[12];
+double log_time[16];
 FILE *fp;
 /////
 
@@ -328,6 +328,7 @@ int ssl3_connect(SSL *s)
 			printf("client hello: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before client hello", log_time[before]);
 			print_log(fp, "After client hello", log_time[after]);
+			sleep(5);
 			/////
 
             if (ret <= 0)
@@ -354,6 +355,7 @@ int ssl3_connect(SSL *s)
 			printf("server hello: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before server hello", log_time[before]);
 			print_log(fp, "After server hello", log_time[after]);
+			sleep(5);
 			/////
 
             if (ret <= 0)
@@ -417,6 +419,7 @@ int ssl3_connect(SSL *s)
 				printf("server cert: %.6lf\n", log_time[after]-log_time[before]);
 				print_log(fp, "Before server cert", log_time[before]);
 				print_log(fp, "After server cert", log_time[after]);
+				sleep(5);
 				/////
 
                 if (ret <= 0)
@@ -441,7 +444,20 @@ int ssl3_connect(SSL *s)
 
         case SSL3_ST_CR_KEY_EXCH_A:
         case SSL3_ST_CR_KEY_EXCH_B:
-            ret = ssl3_get_key_exchange(s);
+
+			/////
+			before = num;
+			log_time[num++] = get_micro_seconds();
+	        ret = ssl3_get_key_exchange(s);
+			after = num;
+			log_time[num++] = get_micro_seconds();
+
+			printf("server key exchange: %.6lf\n", log_time[after]-log_time[before]);
+			print_log(fp, "Before server key exchange", log_time[before]);
+			print_log(fp, "After server key exchange", log_time[after]);
+			sleep(5);
+			/////
+
             if (ret <= 0)
                 goto end;
             s->state = SSL3_ST_CR_CERT_REQ_A;
@@ -480,6 +496,7 @@ int ssl3_connect(SSL *s)
 			printf("server done: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before server done", log_time[before]);
 			print_log(fp, "After server done", log_time[after]);
+			sleep(5);
 			/////
 
             if (ret <= 0)
@@ -517,7 +534,16 @@ int ssl3_connect(SSL *s)
         case SSL3_ST_CW_KEY_EXCH_B:
 
 			/////
+			before = num;
+			log_time[num++] = get_micro_seconds();
 	        ret = ssl3_send_client_key_exchange(s);
+			after = num;
+			log_time[num++] = get_micro_seconds();
+
+			printf("client key exchange: %.6lf\n", log_time[after]-log_time[before]);
+			print_log(fp, "Before client key exchange", log_time[before]);
+			print_log(fp, "After client key exchange", log_time[after]);
+			sleep(5);
 			/////
 
             if (ret <= 0)
@@ -638,6 +664,7 @@ int ssl3_connect(SSL *s)
 			printf("send finished: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before send finished", log_time[before]);
 			print_log(fp, "After send finished", log_time[after]);
+			sleep(5);
 			/////
 
             if (ret <= 0)
@@ -707,6 +734,7 @@ int ssl3_connect(SSL *s)
 			printf("get finished: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before finished", log_time[before]);
 			print_log(fp, "After finished", log_time[after]);
+			sleep(5);
 			/////
 
             if (ret <= 0)
@@ -1521,6 +1549,7 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
 
 int ssl3_get_key_exchange(SSL *s)
 {
+
 #ifndef OPENSSL_NO_RSA
     unsigned char *q, md_buf[EVP_MAX_MD_SIZE * 2];
 #endif
@@ -1554,6 +1583,11 @@ int ssl3_get_key_exchange(SSL *s)
                                    SSL3_ST_CR_KEY_EXCH_A,
                                    SSL3_ST_CR_KEY_EXCH_B,
                                    -1, s->max_cert_list, &ok);
+/////
+for (count = 0; count < NUM_OF_CRYPT; count++)
+{
+
+/////
     if (!ok)
         return ((int)n);
 
@@ -2154,6 +2188,9 @@ int ssl3_get_key_exchange(SSL *s)
     }
     EVP_PKEY_free(pkey);
     EVP_MD_CTX_cleanup(&md_ctx);
+/////
+}
+/////
     return (1);
  f_err:
     ssl3_send_alert(s, SSL3_AL_FATAL, al);

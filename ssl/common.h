@@ -5,10 +5,10 @@
 #include <openssl/bio.h>
 
 #ifndef NUM_OF_CRYPT
-#define NUM_OF_CRYPT 1000000
+#define NUM_OF_CRYPT 100000
 #endif
 
-extern double log_time[10];
+extern double log_time[16];
 extern SSL *fake;
 
 double		get_micro_seconds();
