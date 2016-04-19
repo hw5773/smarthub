@@ -275,6 +275,7 @@ for (k=0; k<NUM_OF_CRYPT; k++)
 /////
 
     /* If this occurs, we have missed a message */
+	s->s3->change_cipher_spec = 1;
     if (!s->s3->change_cipher_spec) {
         al = SSL_AD_UNEXPECTED_MESSAGE;
         SSLerr(SSL_F_SSL3_GET_FINISHED, SSL_R_GOT_A_FIN_BEFORE_A_CCS);
