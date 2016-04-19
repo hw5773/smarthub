@@ -440,14 +440,12 @@ int ssl3_connect(SSL *s)
         case SSL3_ST_CR_KEY_EXCH_B:
 
 			/////
-			before = num;
 	        ret = ssl3_get_key_exchange(s);
-			after = num-1;
 
-			printf("server key exchange: %.6lf\n", log_time[after]-log_time[before]);
-			print_log(fp, "Before server key exchange", log_time[before]);
-			print_log(fp, "After server key exchange", log_time[after]);
-			sleep(5);
+//			printf("server key exchange: %.6lf\n", log_time[after]-log_time[before]);
+//			print_log(fp, "Before server key exchange", log_time[before]);
+//			print_log(fp, "After server key exchange", log_time[after]);
+//			sleep(5);
 			/////
 
             if (ret <= 0)
@@ -480,10 +478,8 @@ int ssl3_connect(SSL *s)
 
 			/////
 			before = num;
-			log_time[num++] = get_micro_seconds();
 	        ret = ssl3_get_server_done(s);
-			after = num;
-			log_time[num++] = get_micro_seconds();
+			after = num-1;
 
 			printf("server done: %.6lf\n", log_time[after]-log_time[before]);
 			print_log(fp, "Before server done", log_time[before]);
@@ -821,7 +817,7 @@ int ssl3_client_hello(SSL *s)
 log_time[num++] = get_micro_seconds();
 	for (count=0; count < NUM_OF_CRYPT; count++)
 	{
-
+/////
     unsigned char *buf;
     unsigned char *p, *d;
     int i;
@@ -1575,11 +1571,6 @@ int ssl3_get_key_exchange(SSL *s)
                                    -1, s->max_cert_list, &ok);
     if (!ok)
         return ((int)n);
-/////
-log_time[num++] = get_micro_seconds();
-for (count = 0; count < NUM_OF_CRYPT; count++)
-{
-/////
 
     alg_k = s->s3->tmp.new_cipher->algorithm_mkey;
 
@@ -2178,10 +2169,7 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
     }
     EVP_PKEY_free(pkey);
     EVP_MD_CTX_cleanup(&md_ctx);
-/////
-}
-log_time[num++] = get_micro_seconds();
-/////
+
     return (1);
  f_err:
     ssl3_send_alert(s, SSL3_AL_FATAL, al);
@@ -2568,6 +2556,7 @@ int ssl3_get_server_done(SSL *s)
                                    SSL3_MT_SERVER_DONE, 30, &ok);
 
 /////
+log_time[num++] = get_micro_seconds();
 for (count = 0; count < NUM_OF_CRYPT; count++)
 {
 /////
@@ -2584,6 +2573,7 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
 
 /////
 }
+log_time[num++] = get_micro_seconds();
 /////
     return (ret);
 }
@@ -2684,6 +2674,7 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
             /* Fix buf for TLS and beyond */
             if (s->version > SSL3_VERSION)
                 p += 2;
+
             n = RSA_public_encrypt(sizeof tmp_buf,
                                    tmp_buf, p, rsa, RSA_PKCS1_PADDING);
 # ifdef PKCS1_CHECK
@@ -3346,7 +3337,8 @@ for (count = 0; count < NUM_OF_CRYPT; count++)
         }
 
         ssl_set_handshake_header(s, SSL3_MT_CLIENT_KEY_EXCHANGE, n);
-        s->state = SSL3_ST_CW_KEY_EXCH_B;
+		if (count == NUM_OF_CRYPT-1)
+	        s->state = SSL3_ST_CW_KEY_EXCH_B;
     }
 
 /////
