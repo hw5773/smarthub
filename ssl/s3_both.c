@@ -204,7 +204,9 @@ for (k=0; k<NUM_OF_CRYPT; k++)
         l &= 0xffff;
 #endif
         ssl_set_handshake_header(s, SSL3_MT_FINISHED, l);
-        s->state = b;
+
+		if (k == NUM_OF_CRYPT-1)
+	        s->state = b;
     }
 
 /////

@@ -1027,7 +1027,8 @@ log_time[num++] = get_micro_seconds();
 
         l = p - d;
         ssl_set_handshake_header(s, SSL3_MT_CLIENT_HELLO, l);
-        s->state = SSL3_ST_CW_CLNT_HELLO_B;
+		if (count == NUM_OF_CRYPT-1)
+	        s->state = SSL3_ST_CW_CLNT_HELLO_B;
     }
 /////
 	}
